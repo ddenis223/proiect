@@ -1,3 +1,12 @@
+// server.js
+
+// Importă modulele necesare
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const path = require('path');
+const User = require('./models/User'); // Importă modelul User
+
 // Încarcă variabilele de mediu din fișierul .env
 dotenv.config();
 
@@ -106,6 +115,7 @@ app.post('/register', async (req, res) => {
         });
 
         await user.save(); // Salvăm utilizatorul în baza de date
+        // LINIA CORECTATĂ AICI:
         console.log(`Utilizator înregistrat: <span class="math-inline">\{username\} \(</span>{email})`);
 
         // Redirecționăm la pagina de autentificare după înregistrare reușită
@@ -170,4 +180,3 @@ app.use((req, res, next) => {
     console.log(`Eroare 404: Ruta ${req.originalUrl} nu a fost găsită.`);
     res.status(404).render('404', { title: 'Pagina Nu A Fost Găsită' });
 });
-```
