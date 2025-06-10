@@ -1,0 +1,22 @@
+# Ignora directorul node_modules
+node_modules/
+
+# Ignora fisierul cu variabile de mediu
+.env
+
+# Ignora fisierele de loguri (optional, daca le-ai crea)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignora fisierele de build si artefacte (daca ar exista)
+build/
+dist/
+.parcel-cache/
+.next/
+.history/
+
+# Ignora fisiere specifice sistemului de operare
+.DS_Store
+Thumbs.db
