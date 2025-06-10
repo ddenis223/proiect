@@ -1,0 +1,38 @@
+k<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">Trabajo Fácil</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Acasă</a></li>
+                    <li><a href="/dashboard">Panou de Control</a></li>
+                    <!-- Aici vom adăuga un link de deconectare mai târziu -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section>
+                <h2>Bun venit în Panoul de Control, <%= locals.username ? username : 'Utilizator' %>!</h2>
+                <p>Aici vei putea gestiona job-urile tale sau găsi noi oportunități.</p>
+            </section>
+            <!-- Aici vom adăuga conținut specific dashboard-ului mai târziu -->
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Trabajo Fácil. Toate drepturile rezervate.</p>
+        </div>
+    </footer>
+</body>
+</html>
+

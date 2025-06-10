@@ -1,0 +1,314 @@
+/* public/style.css */
+
+/* Paletă de culori propusă:
+   - #34495e (Dark Blue-Gray) - Primar, fundal header/footer
+   - #2ecc71 (Emerald Green) - Accent, butoane succes
+   - #e74c3c (Alizarin Red) - Atenționări/Erori
+   - #f39c12 (Orange) - Acțiuni secundare/accent
+   - #ecf0f1 (Clouds - Light Gray) - Fundal general
+   - #ffffff (White) - Carduri/secțiuni
+   - #7f8c8d (Asbestos - Medium Gray) - Text secundar/border
+*/
+
+/* Resetări și stilizare generală */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif; /* Un font modern și lizibil */
+    font-size: 16px;
+    line-height: 1.6;
+    color: #34495e; /* Culoare principală pentru text */
+    background-color: #ecf0f1; /* Fundal foarte deschis */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Container principal pentru conținut */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Stilizare Header */
+header {
+    background-color: #34495e;
+    color: #ffffff;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* Stilizare Navigație */
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px; /* Colțuri rotunjite */
+    background-color: #2ecc71; /* Verde accent */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+nav ul li a:hover {
+    background-color: #27ae60; /* Verde mai închis la hover */
+    transform: translateY(-3px); /* Efect de ridicare mai pronunțat */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Stilizare Main Content */
+main {
+    flex-grow: 1;
+    padding: 30px 0;
+}
+
+main section {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border-radius: 12px; /* Colțuri mai rotunjite */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centrare pentru secțiunile principale */
+}
+
+main h2 {
+    color: #34495e;
+    font-size: 2.2rem;
+    border-bottom: 3px solid #f39c12; /* O linie accent sub titlu */
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: inline-block; /* Pentru ca linia să fie doar sub text */
+}
+
+main p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* Stilizare Footer */
+footer {
+    background-color: #34495e;
+    color: #ffffff;
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 4px solid #f39c12; /* O linie accent deasupra footer-ului */
+    margin-top: auto;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Stilizare Formulare (Login/Register) */
+form {
+    background-color: #ffffff;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 550px;
+    margin: 3rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Spațiu între elementele din formular */
+}
+
+form div {
+    margin-bottom: 0; /* Eliminăm margin-bottom din div pentru a folosi gap pe formular */
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: bold;
+    color: #34495e;
+    font-size: 1.05rem;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #bdc3c7; /* Gri deschis pentru bordură */
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: #34495e;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus {
+    border-color: #2ecc71; /* Verde accent la focus */
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+    outline: none;
+}
+
+form button {
+    background-color: #2ecc71;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    width: 100%;
+    margin-top: 1rem; /* Spațiu deasupra butonului */
+}
+
+form button:hover {
+    background-color: #27ae60;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Linkuri în formulare */
+form p {
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+}
+
+form p a {
+    color: #3498db; /* Albastru link */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+form p a:hover {
+    text-decoration: underline;
+}
+
+/* Stilizare pagina 404 */
+body.error-page {
+    background-color: #e74c3c; /* Roșu */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    flex-direction: column; /* Asigură că textul e centrat vertical */
+}
+
+body.error-page h1 {
+    font-size: 5em;
+    margin-bottom: 20px;
+    border-bottom: none;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body.error-page p {
+    font-size: 1.6em;
+    margin-bottom: 30px;
+}
+
+body.error-page a {
+    color: #f1c40f; /* Galben */
+    text-decoration: none;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.error-page a:hover {
+    background-color: #f1c40f;
+    color: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav ul li a {
+        padding: 0.7rem 1.2rem;
+        width: 80%; /* Lățime mai mare pentru butoane pe mobil */
+        margin: 0 auto;
+        display: block; /* Face link-urile să ocupe toată lățimea disponibilă */
+        font-size: 1rem;
+    }
+
+    main .container {
+        padding: 0 15px; /* Mai puțin padding pe lateral pe mobil */
+    }
+
+    main section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    main h2 {
+        font-size: 1.6rem;
+    }
+
+    form {
+        padding: 2rem;
+        margin: 1.5rem auto;
+    }
+
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"] {
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    form button {
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
+
+    body.error-page h1 {
+        font-size: 3em;
+    }
+
+    body.error-page p {
+        font-size: 1.2em;
+    }
+}
+
+/* Asigură că `.container` este folosit în fișierele EJS */
+/* În fișierele tale EJS (index.ejs, login.ejs, register.ejs, dashboard.ejs),
+   va trebui să învelești conținutul principal într-un div cu clasa 'container'.
+   Exemplu pentru index.ejs:
+   <main>
+       <div class="container">
+           <section>
+               <h2>Găsește jobul visurilor tale!</h2>
+               <p>Explorează diverse oferte de muncă și aplică direct.</p>
+           </section>
+           ...
+       </div>
+   </main>
+*/
+

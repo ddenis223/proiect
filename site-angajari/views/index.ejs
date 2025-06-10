@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Locuri de muncă</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Joburi disponibile</h1>
+  <ul>
+    <% jobs.forEach(job => { %>
+      <li><strong><%= job.title %></strong> - <%= job.domain %></li>
+    <% }) %>
+  </ul>
+  <% if (!currentUser) { %>
+    <a href="/login">Login</a> | <a href="/register">Înregistrare</a>
+  <% } else { %>
+    <form action="/logout" method="POST"><button>Logout</button></form>
+    <a href="/dashboard">Dashboard</a>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,349 @@
+/* style.css */
+
+/* Stiluiri Generale (pentru toate ecranele, în special mobile) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px; /* Adaugă padding general pentru a evita lipirea de margini pe mobil */
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asigură că body-ul ocupă toată înălțimea vizibilă */
+    align-items: center; /* Centrează conținutul pe orizontală */
+}
+
+main {
+    width: 100%;
+    max-width: 1200px; /* Lățime maximă pentru conținut pe ecrane mari */
+    margin: 0 auto; /* Centrează main-ul */
+    padding: 20px 0; /* Padding sus/jos */
+}
+
+h1, h2 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Stiluri pentru antet (header) și navigare */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    width: 100%;
+    box-sizing: border-box; /* Include padding-ul în lățime */
+    text-align: center; /* Centrează link-urile pe mobil */
+    margin-bottom: 20px; /* Spațiu sub antet */
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block; /* Fiecare link pe o linie nouă pe mobil */
+    margin: 5px 0; /* Spațiu între link-uri */
+}
+
+header nav a:hover {
+    background-color: #0056b3;
+    border-radius: 4px;
+}
+
+/* Stiluri pentru formular (register.html) */
+.form-container {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Lățime maximă pe mobil */
+    max-width: 450px; /* Lățime maximă pe desktop */
+    box-sizing: border-box; /* Include padding-ul în lățime */
+    margin: 20px auto; /* Centrează formularul */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: calc(100% - 20px); /* Lățime completă minus padding */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%; /* Lățime completă pe mobil */
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Stiluri pentru mesajele de feedback */
+#feedback-message {
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    word-wrap: break-word; /* Asigură că textul lung se încadrează */
+}
+
+#feedback-message.hidden {
+    display: none;
+}
+
+#feedback-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#feedback-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+#feedback-message.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+/* Stiluri pentru pagina de exemplu de job (empleo_ejemplo.html) */
+.job-detail {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px; /* Lățime maximă pentru detalii job */
+    box-sizing: border-box;
+    margin: 20px auto;
+}
+
+.job-detail h1 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.8em; /* Mărime text adaptată pentru mobil */
+}
+
+.job-detail h2 {
+    color: #007bff;
+    font-size: 1.4em; /* Mărime text adaptată pentru mobil */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.job-meta {
+    text-align: center;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.job-detail ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.job-detail li {
+    margin-bottom: 8px;
+}
+
+.apply-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.apply-section button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+.apply-section button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Stiluri pentru lista de joburi (lista_joburi.html) - Adaptate din ce ai deja */
+.search-filters {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap; /* Permite elementelor sa treaca pe rand nou */
+    gap: 15px;
+    justify-content: center;
+}
+
+.search-filters input[type="text"],
+.search-filters select,
+.search-filters button { /* Adaugat si butonul aici */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1; 
+    min-width: 150px; 
+    box-sizing: border-box; /* Asigura ca padding-ul nu depaseste latimea */
+    font-size: 1em;
+}
+
+#job-listings-container {
+    display: grid; 
+    grid-template-columns: 1fr; /* O singură coloană pe mobil */
+    gap: 20px; 
+    width: 100%;
+    max-width: 1000px; 
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.job-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.job-card:hover {
+    transform: translateY(-5px); 
+}
+
+.job-card h3 {
+    margin-top: 0;
+    color: #007bff;
+    font-size: 1.3em; /* Mărime text adaptată pentru mobil */
+}
+
+.job-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.job-card .location, .job-card .type {
+    font-weight: bold;
+}
+
+.job-card .apply-button {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin-top: auto; 
+    display: inline-block; /* Asigură că e un buton */
+    width: fit-content; /* Se adaptează conținutului */
+}
+
+.job-card .apply-button:hover {
+    background-color: #218838;
+}
+
+#no-jobs-message {
+    text-align: center;
+    color: #666;
+    margin-top: 50px;
+    font-size: 1.2em;
+}
+
+/* Stiluri pentru subsol (footer) */
+footer {
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto; /* Împinge subsolul în jos */
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+
+/* --- MEDIA QUERIES --- */
+/* Reguli aplicate doar pentru ecrane mai mari de 600px (tablete mici și mai sus) */
+@media (min-width: 600px) {
+    header nav {
+        display: flex; /* Link-uri pe aceeași linie */
+        justify-content: center;
+        gap: 20px; /* Spațiu între link-uri */
+    }
+
+    header nav a {
+        display: inline-block; /* Arată ca link-uri normale */
+        margin: 0;
+    }
+
+    .form-container {
+        padding: 30px; /* Mai mult padding pe ecrane mai mari */
+    }
+
+    /* Pe ecrane mai mari, layout-ul joburilor poate fi în 2 coloane */
+    #job-listings-container {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+    }
+
+    .job-card h3 {
+        font-size: 1.5em; /* Mărime text normală */
+    }
+
+    .job-detail h1 {
+        font-size: 2.2em; /* Mărime text normală */
+    }
+    .job-detail h2 {
+        font-size: 1.6em; /* Mărime text normală */
+    }
+}
+
+/* Reguli aplicate doar pentru ecrane mai mari de 900px (desktop) */
+@media (min-width: 900px) {
+    /* Pe desktop, layout-ul joburilor poate fi în 3 coloane (dacă este loc) */
+    #job-listings-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    }
+
+    .search-filters {
+        flex-wrap: nowrap; /* Elementele rămân pe o singură linie dacă este spațiu */
+    }
+}
