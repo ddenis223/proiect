@@ -115,7 +115,7 @@ app.post('/register', async (req, res) => {
         });
 
         await user.save(); // Salvăm utilizatorul în baza de date
-        // LINIA CORECTATĂ AICI:
+        // LINIA CORECTATĂ AICI (FĂRĂ <span class="math-inline">):
         console.log(`Utilizator înregistrat: <span class="math-inline">\{username\} \(</span>{email})`);
 
         // Redirecționăm la pagina de autentificare după înregistrare reușită
