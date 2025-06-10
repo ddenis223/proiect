@@ -1,12 +1,3 @@
-// server.js
-
-// Importă modulele necesare
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const path = require('path');
-const User = require('./models/User'); // Importă modelul User
-
 // Încarcă variabilele de mediu din fișierul .env
 dotenv.config();
 
@@ -14,18 +5,27 @@ dotenv.config();
 const app = express();
 
 // --- Conectarea la Baza de Date MongoDB ---
-const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/site-angajari-db';
+const mongoURI = process.env.MONGO_URI; // Folosim doar variabila de mediu, fara fallback la localhost
 
 const connectDB = async () => {
     try {
         await mongoose.connect(mongoURI);
         console.log('✅ Conectat la MongoDB');
+
+        // --- Pornirea Serverului - MUTATĂ AICI ---
+        const PORT = process.env.PORT || 10000; // Render foloseste portul 10000 intern
+        app.listen(PORT, () => {
+            console.log(`🚀 Server pornit pe http://localhost:${PORT}`);
+        });
+
     } catch (err) {
-        console.error('❌ Eroare MongoDB: ' + err.message);
-        process.exit(1);
+        console.error('❌ Eroare MongoDB: Nu s-a putut conecta la baza de date. Verificați MONGO_URI și Network Access în Atlas.');
+        console.error('Detalii eroare: ' + err.message);
+        process.exit(1); // Oprim procesul daca nu se poate conecta la baza de date
     }
 };
 
+// Apelăm funcția de conectare la baza de date și pornire a serverului
 connectDB();
 
 // --- Middleware-uri Express ---
@@ -106,7 +106,7 @@ app.post('/register', async (req, res) => {
         });
 
         await user.save(); // Salvăm utilizatorul în baza de date
-        console.log(`Utilizator înregistrat: ${username} (${email})`);
+        console.log(`Utilizator înregistrat: <span class="math-inline">\{username\} \(</span>{email})`);
 
         // Redirecționăm la pagina de autentificare după înregistrare reușită
         res.redirect('/login'); // Utilizatorul se poate autentifica acum
@@ -170,11 +170,4 @@ app.use((req, res, next) => {
     console.log(`Eroare 404: Ruta ${req.originalUrl} nu a fost găsită.`);
     res.status(404).render('404', { title: 'Pagina Nu A Fost Găsită' });
 });
-
-
-// --- Pornirea Serverului ---
-const PORT = process.env.PORT || 3000; // Poți lăsa 3001 dacă așa ai setat în .env
-
-app.listen(PORT, () => {
-    console.log(`🚀 Server pornit pe http://localhost:${PORT}`);
-});
+```
