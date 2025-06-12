@@ -7,6 +7,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session'); // NOU: Importă express-session
 const MongoStore = require('connect-mongo'); // NOU: Pentru a stoca sesiunile în MongoDB
+const crypto = require('crypto'); // NOU: Pentru generarea de token-uri securizate (chiar dacă nu le folosim încă pe deplin)
+const nodemailer = require('nodemailer'); // NOU: Pentru trimiterea de emailuri (va necesita configurare)
 
 const User = require('./models/User'); // Importă modelul User
 
@@ -17,7 +19,7 @@ dotenv.config();
 const app = express();
 
 // --- Conectarea la Baza de Date MongoDB ---
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = process.env.MONGO_URI; // Folosim doar variabila de mediu, fara fallback la localhost
 
 const connectDB = async () => {
     try {
@@ -48,7 +50,7 @@ const connectDB = async () => {
         });
 
         // --- Pornirea Serverului - MUTATĂ AICI ---
-        const PORT = process.env.PORT || 10000; // Render folosește portul 10000 intern
+        const PORT = process.env.PORT || 10000; // Render foloseste portul 10000 intern
         app.listen(PORT, () => {
             console.log(`🚀 Server pornit pe http://localhost:${PORT}`);
         });
@@ -122,8 +124,172 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// --- Rute NOU pentru Recuperare Parolă ---
 
-// --- Rute POST pentru Autentificare și Înregistrare ---
+// Ruta GET pentru pagina "Am uitat parola?"
+app.get('/forgot-password', (req, res) => {
+    console.log('Ruta /forgot-password (GET) a fost accesată!');
+    res.render('forgot-password', { title: 'Am uitat parola?', message: null, error: null });
+});
+
+// Ruta POST pentru trimiterea cererii de resetare a parolei (simulată)
+app.post('/forgot-password', async (req, res) => {
+    console.log('Ruta /forgot-password (POST) a fost accesată!');
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).render('forgot-password', {
+            title: 'Am uitat parola?',
+            message: null,
+            error: 'Vă rugăm să introduceți adresa de email.'
+        });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            // Nu dezvălui existența emailului din motive de securitate
+            return res.render('forgot-password', {
+                title: 'Am uitat parola?',
+                message: 'Dacă adresa de email există, un link de resetare a fost trimis.',
+                error: null
+            });
+        }
+
+        // TODO: Generați un token de resetare și data de expirare
+        // const resetToken = crypto.randomBytes(32).toString('hex');
+        // user.resetPasswordToken = resetToken;
+        // user.resetPasswordExpires = Date.now() + 3600000; // 1 oră
+        // await user.save();
+
+        // TODO: Trimiteți emailul cu link-ul de resetare
+        // const transporter = nodemailer.createTransport({ ... });
+        // const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+        // await transporter.sendMail({
+        //     to: user.email,
+        //     from: 'noreply@yourdomain.com', // Trebuie configurat
+        //     subject: 'Resetare parolă pentru Trabajo Fácil',
+        //     html: `<p>Ați cerut resetarea parolei pentru contul dumneavoastră.</p>
+        //            <p>Faceți click pe acest link pentru a reseta parola: <a href="${resetUrl}">${resetUrl}</a></p>
+        //            <p>Acest link este valabil o oră.</p>`
+        // });
+
+        console.log(`Link de resetare (simulat) trimis la: ${email}`); // Schimbați cu logare reala
+
+        res.render('forgot-password', {
+            title: 'Am uitat parola?',
+            message: 'Dacă adresa de email există, un link de resetare a fost trimis.',
+            error: null
+        });
+
+    } catch (err) {
+        console.error('Eroare la cererea de resetare a parolei:', err.message);
+        res.status(500).render('forgot-password', {
+            title: 'Am uitat parola?',
+            message: null,
+            error: 'A apărut o eroare. Vă rugăm să încercați din nou.'
+        });
+    }
+});
+
+// Ruta GET pentru pagina de resetare a parolei (cu token)
+app.get('/reset-password', async (req, res) => {
+    console.log('Ruta /reset-password (GET) a fost accesată!');
+    const { token } = req.query; // Preluăm token-ul din URL
+
+    if (!token) {
+        return res.status(400).render('reset-password', {
+            title: 'Resetare Parolă',
+            error: 'Token de resetare invalid sau lipsă.',
+            token: null
+        });
+    }
+
+    try {
+        // TODO: Verificați dacă token-ul există în baza de date și nu a expirat
+        // const user = await User.findOne({
+        //     resetPasswordToken: token,
+        //     resetPasswordExpires: { $gt: Date.now() } // $gt = greater than (mai mare decât)
+        // });
+
+        // if (!user) {
+        //     return res.status(400).render('reset-password', {
+        //         title: 'Resetare Parolă',
+        //         error: 'Token de resetare invalid sau expirat.',
+        //         token: null
+        //     });
+        // }
+
+        res.render('reset-password', {
+            title: 'Resetare Parolă',
+            error: null,
+            token: token // Pasăm token-ul către șablon
+        });
+
+    } catch (err) {
+        console.error('Eroare la accesarea paginii de resetare:', err.message);
+        res.status(500).render('reset-password', {
+            title: 'Resetare Parolă',
+            error: 'A apărut o eroare. Vă rugăm să încercați din nou.',
+            token: null
+        });
+    }
+});
+
+// Ruta POST pentru trimiterea noii parole (simulată)
+app.post('/reset-password', async (req, res) => {
+    console.log('Ruta /reset-password (POST) a fost accesată!');
+    const { token, password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword || password !== confirmPassword) {
+        return res.status(400).render('reset-password', {
+            title: 'Resetare Parolă',
+            error: 'Parolele nu se potrivesc sau sunt goale.',
+            token: token
+        });
+    }
+
+    try {
+        // TODO: Găsiți utilizatorul după token și verificați expirarea
+        // const user = await User.findOne({
+        //     resetPasswordToken: token,
+        //     resetPasswordExpires: { $gt: Date.now() }
+        // });
+
+        // if (!user) {
+        //     return res.status(400).render('reset-password', {
+        //         title: 'Resetare Parolă',
+        //         error: 'Token de resetare invalid sau expirat.',
+        //         token: null
+        //     });
+        // }
+
+        // TODO: Criptați și salvați noua parolă
+        // user.password = password; // Middleware-ul pre('save') va cripta
+        // user.resetPasswordToken = undefined; // Eliminăm token-ul
+        // user.resetPasswordExpires = undefined; // Eliminăm data de expirare
+        // await user.save();
+
+        console.log(`Parolă resetată (simulat) pentru token: ${token}`); // Schimbați cu logare reala
+
+        res.render('login', {
+            title: 'Autentificare',
+            errorMessage: 'Parola a fost resetată cu succes! Vă puteți autentifica acum.',
+            message: null
+        });
+
+    } catch (err) {
+        console.error('Eroare la resetarea parolei:', err.message);
+        res.status(500).render('reset-password', {
+            title: 'Resetare Parolă',
+            error: 'A apărut o eroare la resetarea parolei. Vă rugăm să încercați din nou.',
+            token: token
+        });
+    }
+});
+
+
+// --- Rute POST pentru Autentificare și Înregistrare (existente) ---
 
 // Ruta POST pentru înregistrarea unui nou utilizator
 app.post('/register', async (req, res) => {
@@ -207,7 +373,7 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        // --- NOU: Salvăm ID-ul utilizatorului și username-ul în sesiune la autentificare reușită ---
+        // --- Salvăm ID-ul utilizatorului și username-ul în sesiune la autentificare reușită ---
         req.session.userId = user._id;
         req.session.username = user.username;
         console.log(`Utilizator autentificat: ${user.username}`);
