@@ -4,37 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1><a href="/">Trabajo Fácil</a></h1>
-            <nav>
-                <ul>
-                    <li><a href="/">Acasă</a></li>
+        <h1>Trabajo Fácil</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Acasă</a></li>
+                <% if (locals.isAuthenticated) { %>
+                    <li><a href="/dashboard">Panou de control</a></li>
+                    <li><a href="/logout">Deconectare (<%= locals.username %>)</a></li>
+                <% } else { %>
                     <li><a href="/login">Autentificare</a></li>
                     <li><a href="/register">Înregistrare</a></li>
-                </ul>
-            </nav>
-        </div>
+                <% } %>
+            </ul>
+        </nav>
     </header>
     <main>
-        <div class="container">
-            <section>
-                <h2>TrabajoFácil: Conectando talento con oportunidades en toda España.</h2>
-                <p>Găsește jobul visurilor tale! Explorează diverse oferte de muncă și aplică direct.</p>
-            </section>
-            <section>
-                <h2>Postează o ofertă de muncă</h2>
-                <p>Ești angajator? Ajută-ne să conectăm talente cu oportunități.</p>
-            </section>
-        </div>
+        <h2>Bine ați venit la Trabajo Fácil!</h2>
+        <p>Platforma unde găsiți jobul perfect sau angajatul ideal în Spania.</p>
     </main>
     <footer>
-        <div class="container">
-            <p>&copy; 2025 Trabajo Fácil. Toate drepturile rezervate.</p>
-        </div>
+        <p>&copy; 2025 Trabajo Fácil</p>
     </footer>
 </body>
 </html>

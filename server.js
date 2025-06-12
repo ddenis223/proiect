@@ -5,6 +5,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
+const session = require('express-session'); // NOU: Importă express-session
+const MongoStore = require('connect-mongo'); // NOU: Pentru a stoca sesiunile în MongoDB
+
 const User = require('./models/User'); // Importă modelul User
 
 // Încarcă variabilele de mediu din fișierul .env
@@ -14,15 +17,38 @@ dotenv.config();
 const app = express();
 
 // --- Conectarea la Baza de Date MongoDB ---
-const mongoURI = process.env.MONGO_URI; // Folosim doar variabila de mediu, fara fallback la localhost
+const mongoURI = process.env.MONGO_URI;
 
 const connectDB = async () => {
     try {
         await mongoose.connect(mongoURI);
         console.log('✅ Conectat la MongoDB');
 
+        // --- Configurare Sesiune NOU: Stochează sesiunile în MongoDB ---
+        app.use(session({
+            secret: process.env.SESSION_SECRET, // Folosește o variabilă de mediu pentru secret
+            resave: false, // Nu salvează sesiunea dacă nu a fost modificată
+            saveUninitialized: false, // Nu creează o sesiune până nu e necesar
+            store: MongoStore.create({
+                mongoUrl: mongoURI,
+                collectionName: 'sessions', // Numele colecției unde vor fi stocate sesiunile
+                ttl: 14 * 24 * 60 * 60 // Durata de viață a sesiunii în secunde (14 zile)
+            }),
+            cookie: {
+                maxAge: 1000 * 60 * 60 * 24 * 14, // Durata de viață a cookie-ului (14 zile)
+                secure: process.env.NODE_ENV === 'production' // Folosește cookie-uri sigure (HTTPS) în producție
+            }
+        }));
+
+        // Middleware pentru a adăuga datele de sesiune în variabilele locale ale șabloanelor EJS
+        app.use((req, res, next) => {
+            res.locals.isAuthenticated = req.session.userId ? true : false;
+            res.locals.username = req.session.username || null;
+            next();
+        });
+
         // --- Pornirea Serverului - MUTATĂ AICI ---
-        const PORT = process.env.PORT || 10000; // Render foloseste portul 10000 intern
+        const PORT = process.env.PORT || 10000; // Render folosește portul 10000 intern
         app.listen(PORT, () => {
             console.log(`🚀 Server pornit pe http://localhost:${PORT}`);
         });
@@ -49,6 +75,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+// --- Middleware pentru protejarea rutelor ---
+const isAuthenticated = (req, res, next) => {
+    if (!req.session.userId) {
+        // Dacă utilizatorul nu este autentificat, redirecționează-l la pagina de login
+        return res.redirect('/login');
+    }
+    next(); // Dacă este autentificat, continuă la ruta cerută
+};
+
+
 // --- Rutele Aplicației Tale ---
 
 // Ruta principală (pagina de pornire)
@@ -69,11 +105,23 @@ app.get('/register', (req, res) => {
     res.render('register', { title: 'Înregistrare', errorMessage: null });
 });
 
-// Ruta pentru pagina de bord (dashboard) - necesită autentificare în aplicație reală
-app.get('/dashboard', (req, res) => {
-    console.log('Ruta /dashboard a fost accesată!');
+// Ruta pentru pagina de bord (dashboard) - acum este protejată!
+app.get('/dashboard', isAuthenticated, (req, res) => { // NOU: Folosim middleware-ul isAuthenticated
+    console.log('Ruta /dashboard a fost accesată de utilizatorul autentificat!');
     res.render('dashboard', { title: 'Panou de Control' });
 });
+
+// Ruta de deconectare (logout) NOU!
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => { // Distruge sesiunea
+        if (err) {
+            console.error('Eroare la deconectare:', err);
+            return res.status(500).send('Eroare la deconectare.');
+        }
+        res.redirect('/'); // Redirecționează la pagina principală
+    });
+});
+
 
 // --- Rute POST pentru Autentificare și Înregistrare ---
 
@@ -115,8 +163,7 @@ app.post('/register', async (req, res) => {
         });
 
         await user.save(); // Salvăm utilizatorul în baza de date
-        // LINIA CORECTATĂ AICI (FĂRĂ <span class="math-inline">):
-        console.log(`Utilizator înregistrat: <span class="math-inline">\{username\} \(</span>{email})`);
+        console.log(`Utilizator înregistrat: ${username} (${email})`);
 
         // Redirecționăm la pagina de autentificare după înregistrare reușită
         res.redirect('/login'); // Utilizatorul se poate autentifica acum
@@ -160,9 +207,11 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        // --- AICI VEI ADĂUGA LOGICA DE SESIUNE SAU JWT PENTRU A MENȚINE UTILIZATORUL LOGAT ---
-        // Momentan, doar redirecționăm la dashboard la succes
+        // --- NOU: Salvăm ID-ul utilizatorului și username-ul în sesiune la autentificare reușită ---
+        req.session.userId = user._id;
+        req.session.username = user.username;
         console.log(`Utilizator autentificat: ${user.username}`);
+        
         res.redirect('/dashboard'); // Redirecționează la dashboard după autentificare reușită
 
     } catch (err) {

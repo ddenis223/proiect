@@ -1,38 +1,39 @@
-k<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1><a href="/">Trabajo Fácil</a></h1>
-            <nav>
-                <ul>
-                    <li><a href="/">Acasă</a></li>
-                    <li><a href="/dashboard">Panou de Control</a></li>
-                    <!-- Aici vom adăuga un link de deconectare mai târziu -->
-                </ul>
-            </nav>
-        </div>
+        <h1>Trabajo Fácil</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Acasă</a></li>
+                <% if (locals.isAuthenticated) { %>
+                    <li><a href="/dashboard">Panou de control</a></li>
+                    <li><a href="/logout">Deconectare (<%= locals.username %>)</a></li>
+                <% } else { %>
+                    <li><a href="/login">Autentificare</a></li>
+                    <li><a href="/register">Înregistrare</a></li>
+                <% } %>
+            </ul>
+        </nav>
     </header>
     <main>
-        <div class="container">
-            <section>
-                <h2>Bun venit în Panoul de Control, <%= locals.username ? username : 'Utilizator' %>!</h2>
-                <p>Aici vei putea gestiona job-urile tale sau găsi noi oportunități.</p>
-            </section>
-            <!-- Aici vom adăuga conținut specific dashboard-ului mai târziu -->
-        </div>
+        <h2>Panoul de Control al Utilizatorului</h2>
+        <% if (locals.isAuthenticated) { %>
+            <p>Salut, **<%= locals.username %>**! Bine ai venit în panoul tău de control.</p>
+            <p>Aici vei putea gestiona joburile tale, aplicațiile sau alte setări.</p>
+        <% } else { %>
+            <p>Trebuie să fii autentificat pentru a accesa această pagină.</p>
+        <% } %>
+        <p><a href="/">Înapoi la pagina principală</a></p>
     </main>
     <footer>
-        <div class="container">
-            <p>&copy; 2025 Trabajo Fácil. Toate drepturile rezervate.</p>
-        </div>
+        <p>&copy; 2025 Trabajo Fácil</p>
     </footer>
 </body>
 </html>
-
