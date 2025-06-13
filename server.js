@@ -18,7 +18,7 @@ dotenv.config();
 // Creează o instanță a aplicației Express
 const app = express();
 
-// --- Middleware-uri Express (MUTATE MAI SUS) ---
+// --- Middleware-uri Express (MUTATE MAI SUS PENTRU A FI ACCESIBILE) ---
 // Acestea trebuie să fie definite înainte ca serverul să pornească ascultarea.
 app.use(express.json()); // Pentru a parsa cererile cu JSON body
 app.use(express.urlencoded({ extended: false })); // Pentru a parsa cererile cu URL-encoded body (formulare)
