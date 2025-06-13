@@ -5,10 +5,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
-const session = require('express-session'); // NOU: Importă express-session
-const MongoStore = require('connect-mongo'); // NOU: Pentru a stoca sesiunile în MongoDB
-const crypto = require('crypto'); // NOU: Pentru generarea de token-uri securizate (chiar dacă nu le folosim încă pe deplin)
-const nodemailer = require('nodemailer'); // NOU: Pentru trimiterea de emailuri (va necesita configurare)
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const User = require('./models/User'); // Importă modelul User
 
@@ -18,8 +18,21 @@ dotenv.config();
 // Creează o instanță a aplicației Express
 const app = express();
 
+// --- Middleware-uri Express (MUTATE MAI SUS) ---
+// Acestea trebuie să fie definite înainte ca serverul să pornească ascultarea.
+app.use(express.json()); // Pentru a parsa cererile cu JSON body
+app.use(express.urlencoded({ extended: false })); // Pentru a parsa cererile cu URL-encoded body (formulare)
+
+// Setează motorul de șabloane (view engine) la EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Servește fișiere statice (CSS, JavaScript, imagini etc.) din directorul 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 // --- Conectarea la Baza de Date MongoDB ---
-const mongoURI = process.env.MONGO_URI; // Folosim doar variabila de mediu, fara fallback la localhost
+const mongoURI = process.env.MONGO_URI;
 
 const connectDB = async () => {
     try {
@@ -27,18 +40,19 @@ const connectDB = async () => {
         console.log('✅ Conectat la MongoDB');
 
         // --- Configurare Sesiune NOU: Stochează sesiunile în MongoDB ---
+        // Acest middleware depinde de conexiunea la MongoDB, deci rămâne aici.
         app.use(session({
-            secret: process.env.SESSION_SECRET, // Folosește o variabilă de mediu pentru secret
-            resave: false, // Nu salvează sesiunea dacă nu a fost modificată
-            saveUninitialized: false, // Nu creează o sesiune până nu e necesar
+            secret: process.env.SESSION_SECRET,
+            resave: false,
+            saveUninitialized: false,
             store: MongoStore.create({
                 mongoUrl: mongoURI,
-                collectionName: 'sessions', // Numele colecției unde vor fi stocate sesiunile
-                ttl: 14 * 24 * 60 * 60 // Durata de viață a sesiunii în secunde (14 zile)
+                collectionName: 'sessions',
+                ttl: 14 * 24 * 60 * 60
             }),
             cookie: {
-                maxAge: 1000 * 60 * 60 * 24 * 14, // Durata de viață a cookie-ului (14 zile)
-                secure: process.env.NODE_ENV === 'production' // Folosește cookie-uri sigure (HTTPS) în producție
+                maxAge: 1000 * 60 * 60 * 24 * 14,
+                secure: process.env.NODE_ENV === 'production'
             }
         }));
 
@@ -50,7 +64,7 @@ const connectDB = async () => {
         });
 
         // --- Pornirea Serverului - MUTATĂ AICI ---
-        const PORT = process.env.PORT || 10000; // Render foloseste portul 10000 intern
+        const PORT = process.env.PORT || 10000; // Render folosește portul 10000 intern
         app.listen(PORT, () => {
             console.log(`🚀 Server pornit pe http://localhost:${PORT}`);
         });
@@ -58,32 +72,20 @@ const connectDB = async () => {
     } catch (err) {
         console.error('❌ Eroare MongoDB: Nu s-a putut conecta la baza de date. Verificați MONGO_URI și Network Access în Atlas.');
         console.error('Detalii eroare: ' + err.message);
-        process.exit(1); // Oprim procesul daca nu se poate conecta la baza de date
+        process.exit(1);
     }
 };
 
 // Apelăm funcția de conectare la baza de date și pornire a serverului
 connectDB();
 
-// --- Middleware-uri Express ---
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Setează motorul de șabloane (view engine) la EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Servește fișiere statice (CSS, JavaScript, imagini etc.) din directorul 'public'
-app.use(express.static(path.join(__dirname, 'public')));
-
 
 // --- Middleware pentru protejarea rutelor ---
 const isAuthenticated = (req, res, next) => {
     if (!req.session.userId) {
-        // Dacă utilizatorul nu este autentificat, redirecționează-l la pagina de login
         return res.redirect('/login');
     }
-    next(); // Dacă este autentificat, continuă la ruta cerută
+    next();
 };
 
 
@@ -108,23 +110,23 @@ app.get('/register', (req, res) => {
 });
 
 // Ruta pentru pagina de bord (dashboard) - acum este protejată!
-app.get('/dashboard', isAuthenticated, (req, res) => { // NOU: Folosim middleware-ul isAuthenticated
+app.get('/dashboard', isAuthenticated, (req, res) => {
     console.log('Ruta /dashboard a fost accesată de utilizatorul autentificat!');
     res.render('dashboard', { title: 'Panou de Control' });
 });
 
-// Ruta de deconectare (logout) NOU!
+// Ruta de deconectare (logout)
 app.get('/logout', (req, res) => {
-    req.session.destroy(err => { // Distruge sesiunea
+    req.session.destroy(err => {
         if (err) {
             console.error('Eroare la deconectare:', err);
             return res.status(500).send('Eroare la deconectare.');
         }
-        res.redirect('/'); // Redirecționează la pagina principală
+        res.redirect('/');
     });
 });
 
-// --- Rute NOU pentru Recuperare Parolă ---
+// --- Rute pentru Recuperare Parolă ---
 
 // Ruta GET pentru pagina "Am uitat parola?"
 app.get('/forgot-password', (req, res) => {
@@ -148,7 +150,6 @@ app.post('/forgot-password', async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            // Nu dezvălui existența emailului din motive de securitate
             return res.render('forgot-password', {
                 title: 'Am uitat parola?',
                 message: 'Dacă adresa de email există, un link de resetare a fost trimis.',
@@ -167,14 +168,14 @@ app.post('/forgot-password', async (req, res) => {
         // const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
         // await transporter.sendMail({
         //     to: user.email,
-        //     from: 'noreply@yourdomain.com', // Trebuie configurat
+        //     from: 'noreply@yourdomain.com',
         //     subject: 'Resetare parolă pentru Trabajo Fácil',
         //     html: `<p>Ați cerut resetarea parolei pentru contul dumneavoastră.</p>
         //            <p>Faceți click pe acest link pentru a reseta parola: <a href="${resetUrl}">${resetUrl}</a></p>
         //            <p>Acest link este valabil o oră.</p>`
         // });
 
-        console.log(`Link de resetare (simulat) trimis la: ${email}`); // Schimbați cu logare reala
+        console.log(`Link de resetare (simulat) trimis la: ${email}`);
 
         res.render('forgot-password', {
             title: 'Am uitat parola?',
@@ -195,7 +196,7 @@ app.post('/forgot-password', async (req, res) => {
 // Ruta GET pentru pagina de resetare a parolei (cu token)
 app.get('/reset-password', async (req, res) => {
     console.log('Ruta /reset-password (GET) a fost accesată!');
-    const { token } = req.query; // Preluăm token-ul din URL
+    const { token } = req.query;
 
     if (!token) {
         return res.status(400).render('reset-password', {
@@ -209,7 +210,7 @@ app.get('/reset-password', async (req, res) => {
         // TODO: Verificați dacă token-ul există în baza de date și nu a expirat
         // const user = await User.findOne({
         //     resetPasswordToken: token,
-        //     resetPasswordExpires: { $gt: Date.now() } // $gt = greater than (mai mare decât)
+        //     resetPasswordExpires: { $gt: Date.now() }
         // });
 
         // if (!user) {
@@ -223,7 +224,7 @@ app.get('/reset-password', async (req, res) => {
         res.render('reset-password', {
             title: 'Resetare Parolă',
             error: null,
-            token: token // Pasăm token-ul către șablon
+            token: token
         });
 
     } catch (err) {
@@ -265,12 +266,12 @@ app.post('/reset-password', async (req, res) => {
         // }
 
         // TODO: Criptați și salvați noua parolă
-        // user.password = password; // Middleware-ul pre('save') va cripta
-        // user.resetPasswordToken = undefined; // Eliminăm token-ul
-        // user.resetPasswordExpires = undefined; // Eliminăm data de expirare
+        // user.password = password;
+        // user.resetPasswordToken = undefined;
+        // user.resetPasswordExpires = undefined;
         // await user.save();
 
-        console.log(`Parolă resetată (simulat) pentru token: ${token}`); // Schimbați cu logare reala
+        console.log(`Parolă resetată (simulat) pentru token: ${token}`);
 
         res.render('login', {
             title: 'Autentificare',
@@ -328,11 +329,10 @@ app.post('/register', async (req, res) => {
             password
         });
 
-        await user.save(); // Salvăm utilizatorul în baza de date
+        await user.save();
         console.log(`Utilizator înregistrat: ${username} (${email})`);
 
-        // Redirecționăm la pagina de autentificare după înregistrare reușită
-        res.redirect('/login'); // Utilizatorul se poate autentifica acum
+        res.redirect('/login');
     } catch (err) {
         console.error('Eroare la înregistrare:', err.message);
         res.status(500).render('register', {
@@ -355,7 +355,6 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        // Căutăm utilizatorul după email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).render('login', {
@@ -364,7 +363,6 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        // Verificăm parola criptată
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
             return res.status(400).render('login', {
@@ -373,12 +371,11 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        // --- Salvăm ID-ul utilizatorului și username-ul în sesiune la autentificare reușită ---
         req.session.userId = user._id;
         req.session.username = user.username;
         console.log(`Utilizator autentificat: ${user.username}`);
         
-        res.redirect('/dashboard'); // Redirecționează la dashboard după autentificare reușită
+        res.redirect('/dashboard');
 
     } catch (err) {
         console.error('Eroare la autentificare:', err.message);

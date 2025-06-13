@@ -8,32 +8,38 @@
 </head>
 <body>
     <header>
-        <h1>Trabajo Fácil</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Acasă</a></li>
-                <% if (locals.isAuthenticated) { %>
-                    <li><a href="/dashboard">Panou de control</a></li>
-                    <li><a href="/logout">Deconectare (<%= locals.username %>)</a></li>
-                <% } else { %>
-                    <li><a href="/login">Autentificare</a></li>
-                    <li><a href="/register">Înregistrare</a></li>
-                <% } %>
-            </ul>
-        </nav>
+        <div class="container">
+            <h1><a href="/">Trabajo Fácil de Encontrar</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Acasă</a></li>
+                    <% if (locals.isAuthenticated) { %>
+                        <li><a href="/dashboard">Panou de control</a></li>
+                        <li><a href="/logout">Deconectare (<%= locals.username %>)</a></li>
+                    <% } else { %>
+                        <li><a href="/login">Autentificare</a></li>
+                        <li><a href="/register">Înregistrare</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
     </header>
     <main>
-        <h2>Panoul de Control al Utilizatorului</h2>
-        <% if (locals.isAuthenticated) { %>
-            <p>Salut, **<%= locals.username %>**! Bine ai venit în panoul tău de control.</p>
-            <p>Aici vei putea gestiona joburile tale, aplicațiile sau alte setări.</p>
-        <% } else { %>
-            <p>Trebuie să fii autentificat pentru a accesa această pagină.</p>
-        <% } %>
-        <p><a href="/">Înapoi la pagina principală</a></p>
+        <div class="container">
+            <h2>Panoul de Control al Utilizatorului</h2>
+            <% if (locals.isAuthenticated) { %>
+                <p>Salut, **<%= locals.username %>**! Bine ai venit în panoul tău de control.</p>
+                <p>Aici vei putea gestiona joburile tale, aplicațiile sau alte setări.</p>
+            <% } else { %>
+                <p>Trebuie să fii autentificat pentru a accesa această pagină.</p>
+            <% } %>
+            <p><a href="/">Înapoi la pagina principală</a></p>
+        </div>
     </main>
     <footer>
-        <p>&copy; 2025 Trabajo Fácil</p>
+        <div class="container">
+            <p>&copy; 2025 Trabajo Fácil. Realizat de Denis.Acuzatul. Am câștigat pariul:)! Toate drepturile rezervate.</p>
+        </div>
     </footer>
 </body>
 </html>

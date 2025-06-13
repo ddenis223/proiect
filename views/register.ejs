@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1><a href="/">Trabajo Fácil</a></h1>
+            <h1><a href="/">Trabajo Fácil de Encontrar</a></h1>
             <nav>
                 <ul>
                     <li><a href="/">Acasă</a></li>
-                    <li><a href="/login">Autentificare</a></li>
-                    <li><a href="/register">Înregistrare</a></li>
+                    <% if (locals.isAuthenticated) { %>
+                        <li><a href="/dashboard">Panou de control</a></li>
+                        <li><a href="/logout">Deconectare (<%= locals.username %>)</a></li>
+                    <% } else { %>
+                        <li><a href="/login">Autentificare</a></li>
+                        <li><a href="/register">Înregistrare</a></li>
+                    <% } %>
                 </ul>
             </nav>
         </div>
@@ -39,13 +44,15 @@
                     <input type="password" id="password" name="password" required>
                 </div>
                 <button type="submit">Înregistrează-te</button>
-                <p>Ai deja un cont? <a href="/login">Autentifică-te aici</a></p>
+                <p>
+                    Ai deja un cont? <a href="/login">Autentifică-te aici</a>
+                </p>
             </form>
         </div>
     </main>
     <footer>
         <div class="container">
-            <p>&copy; 2025 Trabajo Fácil. Toate drepturile rezervate.</p>
+            <p>&copy; 2025 Trabajo Fácil. Realizat de Denis.Acuzatul. Am câștigat pariul:)! Toate drepturile rezervate.</p>
         </div>
     </footer>
 </body>
